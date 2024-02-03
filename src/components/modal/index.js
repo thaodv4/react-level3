@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import React, { memo, useCallback, useRef } from "react";
 import styled from "styled-components";
 import { getRootStyleDialog } from "./modules/getRootStyleDialog";
 import { createPortal } from "react-dom";
@@ -11,55 +11,53 @@ export const Dialog = memo(
     header,
     footer,
     body,
-    closeBtn,
     isOpen,
     onClose,
     isModal,
     style,
-    // TODO: Handling click outside will close the dialog.
-    // isCloseWhenClickOutside,
+    maskClosable = true,
   }) => {
-    // TODO: Handling click outside will close the dialog.
-    // ref for Root element
-    // const ref = useRef();
-    // const [isOpenState, setIsOpenState] = useState(isOpen);
+    const contentClickRef = useRef(false);
+    const wrapperRef = useRef();
+    const contentRef = useRef();
 
-    /**
-     * TODO: Handling click outside will close the dialog.
-     */
-    // const handleClose = useCallback(() => {
-    //   setIsOpenState(false);
-    //   onClose && onClose();
-    // }, [onClose]);
+    const onContentMouseDown = useCallback(() => {
+      contentClickRef.current = true;
+    }, []);
 
-    // useEffect(() => {
-    //   const handleClickOutside = (event) => {
-    //     if (!ref.current?.contains(event.target)) {
-    //       handleClose();
-    //     }
-    //   };
+    const onInternalClose = useCallback(() => {
+      onClose?.();
+    }, [onClose]);
 
-    //   if (isCloseWhenClickOutside) {
-    //     window.addEventListener("click", handleClickOutside);
-    //     return () => {
-    //       window.removeEventListener("click", handleClickOutside);
-    //     };
-    //   }
-    // }, [handleClose, isCloseWhenClickOutside]);
+    let onWrapperClick = null;
 
-    /**
-     *  TODO: Handling click outside will close the dialog.
-     *  Change to "isOpenState"
-     * */
+    if (maskClosable && isModal) {
+      onWrapperClick = (e) => {
+        if (contentClickRef.current) {
+          contentClickRef.current = false;
+        } else if (wrapperRef.current === e.target) {
+          onInternalClose();
+        }
+      };
+    }
+
     if (!isOpen) return null;
 
     return createPortal(
       <div>
-        <Root $isModal={isModal}>
-          <DialogContent style={style}>
-            <div>{header}</div>
-            <div>{body}</div>
-            <div>{footer}</div>
+        <Root
+          $isModal={isModal}
+          onClick={onWrapperClick}
+          ref={wrapperRef}
+        >
+          <DialogContent
+            style={style}
+            onMouseDown={onContentMouseDown}
+            ref={contentRef}
+          >
+            {header && <>{header}</>}
+            {body && <>{body}</>}
+            {footer && <>{footer}</>}
           </DialogContent>
         </Root>
       </div>,
