@@ -5,12 +5,6 @@ export const useStore = (key) => {
   const [value, setValue] = useState(getValueLocal(key));
 
   useEffect(() => {
-    localStorage.setItem(key, JSON.stringify(value));
-    window.dispatchEvent(new Event("storage"));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [value]);
-
-  useEffect(() => {
     const handleStorageChange = (event) => {
       setValue(getValueLocal(key));
     };
@@ -23,5 +17,11 @@ export const useStore = (key) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return [value, setValue];
+  const setStoreValue = (value) => {
+    localStorage.setItem(key, JSON.stringify(value));
+    window.dispatchEvent(new Event("storage"));
+    setValue(() => value);
+  };
+
+  return [value, setStoreValue];
 };
