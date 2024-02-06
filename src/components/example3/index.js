@@ -8,7 +8,9 @@ export const Example3 = memo(() => {
     console.log(item);
   }, []);
 
-  const handleValueChange = useCallback((item) => {}, []);
+  const handleValueChange = useCallback((item) => {
+    console.log(item);
+  }, []);
 
   return (
     <Root>
