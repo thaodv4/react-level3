@@ -1,6 +1,7 @@
 import { memo, useCallback } from "react";
 import { Button } from "../../button";
 import { useStore } from "../../../hooks/useStore";
+import styled from "styled-components";
 
 export const Change = memo(() => {
   const [, setStore] = useStore("example1");
@@ -10,9 +11,13 @@ export const Change = memo(() => {
   }, []);
 
   return (
-    <div>
+    <Root>
       <h3>Component Will Change</h3>
       <Button onClick={handleChange}>Click to change</Button>
-    </div>
+    </Root>
   );
 });
+
+const Root = styled.div`
+  width: 50%;
+`;

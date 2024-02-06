@@ -5,17 +5,16 @@ import { memo } from "react";
 
 export const Example1 = memo(() => {
   return (
-    <Root>
+    <div>
       <h2>EXERCISE 1 Example </h2>
-      <div>
+      <Container>
         <Change />
         <DisplayChange />
-      </div>
-    </Root>
+      </Container>
+    </div>
   );
 });
 
-const Root = styled.div`
-  width: 800px;
-  margin: 0 auto;
+const Container = styled.div`
+  display: flex;
 `;
